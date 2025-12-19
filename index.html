@@ -2,25 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>NFC Redirect</title>
-  <style>
-    /* Make iframe invisible if you just want it to trigger the first page */
-    iframe { display: none; }
-  </style>
-  <script>
-    window.onload = function() {
-      // Step 1: Load verification link in an invisible iframe
-      var iframe = document.createElement('iframe');
-      iframe.src = "https://mooseknuckles.io/mk/v1/?t=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFuZXh5YSJ9.eyJzdWIiOiJyZWRpcmVjdGlvbiIsImNvdW50cnkiOiJHQiIsImNvbG9yIjoiMjkwIiwiY2l0eSI6IklsZm9yZCIsImxhbmd1YWdlIjoiZW4iLCJ0aW1lc3RhbXBVVEMiOjE3NjYxNjM2NTIwMjIsInRlY2hub2xvZ3kiOiJORkMiLCJ0aWQiOiJlMjgwYjExNDIwMDA3ODAxMDIwOGRmZTIiLCJpc3MiOiJhbmV4eWEifQ.sig";
-      document.body.appendChild(iframe);
-
-      // Step 2: After 3 seconds, redirect current tab to product page
-      setTimeout(function() {
-        window.location.href = "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005";
-      }, 3000);
-    };
-  </script>
+  <title>Test</title>
 </head>
-<body>
+<body style="font-family: Arial; text-align:center; padding-top:50px;">
+  <h1>BUTTON TEST</h1>
+  <button onclick="alert('Button works')">
+    CLICK ME
+  </button>
 </body>
 </html>
