@@ -3,16 +3,14 @@
 <head>
   <meta charset="utf-8">
   <title>NFC Redirect</title>
-
-  <!-- Step 1: Moose Knuckles verification link -->
-  <meta http-equiv="refresh" content="0; url=https://mooseknuckles.io/mk/v1/?t=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFuZXh5YSJ9.eyJzdWIiOiJyZWRpcmVjdGlvbiIsImNvdW50cnkiOiJHQiIsImNvbG9yIjoiMjkwIiwiY2l0eSI6IklsZm9yZCIsImxhbmd1YWdlIjoiZW4iLCJ0aW1lc3RhbXBVVEMiOjE3NjYxNjM2NTIwMjIsInRlY2hub2xvZ3kiOiJORkMiLCJ0aWQiOiJlMjgwYjExNDIwMDA3ODAxMDIwOGRmZTIiLCJpc3MiOiJhbmV4eWEifQ.sig">
-
-  <!-- Step 2: Product page after 3 seconds -->
   <script>
-    setTimeout(function () {
-      window.location.href =
-        "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005";
-    }, 3000);  // 3000 milliseconds = 3 seconds
+    // Step 1: Open the verification link
+    window.location.href = "https://mooseknuckles.io/mk/v1/?t=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFuZXh5YSJ9.eyJzdWIiOiJyZWRpcmVjdGlvbiIsImNvdW50cnkiOiJHQiIsImNvbG9yIjoiMjkwIiwiY2l0eSI6IklsZm9yZCIsImxhbmd1YWdlIjoiZW4iLCJ0aW1lc3RhbXBVVEMiOjE3NjYxNjM2NTIwMjIsInRlY2hub2xvZ3kiOiJORkMiLCJ0aWQiOiJlMjgwYjExNDIwMDA3ODAxMDIwOGRmZTIiLCJpc3MiOiJhbmV4eWEifQ.sig";
+
+    // Step 2: After 3 seconds, open the product page in the same tab
+    setTimeout(function() {
+      window.location.href = "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005";
+    }, 3000);
   </script>
 </head>
 <body>
