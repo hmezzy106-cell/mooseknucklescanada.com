@@ -60,6 +60,7 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,.45);
   color: #fff;
   animation: fadeIn .8s ease;
+  transition: opacity 0.8s ease;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }
@@ -107,6 +108,8 @@ button:active {
   margin-top: 20px;
   font-size: 24px;
   display: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
 }
 #tick {
   color: #00ff00;
@@ -142,29 +145,34 @@ button:active {
 const btn = document.getElementById("verifyBtn");
 const loader = document.getElementById("loader");
 const tick = document.getElementById("tick");
-const message = document.getElementById("message");
+const card = document.querySelector(".card");
 
 btn.addEventListener("click", () => {
   btn.style.display = "none";
+  
+  // Show loader with fade-in
   loader.style.display = "block";
+  setTimeout(() => { loader.style.opacity = 1; }, 50);
 
-  // Loader 2 seconds
+  // After 2s: hide loader, show tick with fade
   setTimeout(() => {
-    loader.style.display = "none";
-    tick.style.display = "block";
+    loader.style.opacity = 0;
+    setTimeout(() => {
+      loader.style.display = "none";
+      tick.style.display = "block";
+      setTimeout(() => { tick.style.opacity = 1; }, 50);
+    }, 500);
   }, 2000);
 
-  // Fade out card after 2 seconds
-  setTimeout(() => {
-    document.querySelector(".card").style.opacity = "0";
-  }, 3500);
+  // Fade out card after 3.5s
+  setTimeout(() => { card.style.opacity = 0; }, 3500);
 
-  // Redirect after 3.8 seconds
+  // Redirect same tab after 4s
   setTimeout(() => {
     window.location.replace(
       "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005"
     );
-  }, 3800);
+  }, 4000);
 });
 </script>
 
