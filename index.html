@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0b1d26, #020b10);
+  color: white;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 1.2s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.logo {
+  width: 160px;
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 14px 30px;
+  border-radius: 30px;
+  border: none;
+  background: white;
+  color: black;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+.loader {
+  width: 46px;
+  height: 46px;
+  border: 5px solid rgba(255,255,255,0.2);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fadeText {
+  opacity: 0;
+  animation: fadeText 0.8s forwards;
+}
+
+@keyframes fadeText {
+  to { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="snow"></canvas>
+
+<div class="container">
+  <img src="logo.png" class="logo" alt="Logo">
+
+  <button id="verifyBtn">Verify Product</button>
+
+  <div id="loading" class="hidden">
+    <div class="loader"></div>
+    <p id="statusText">Verifying product…</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* BUTTON FLOW */
+  const btn = document.getElementById("verifyBtn");
+  const loading = document.getElementById("loading");
+  const statusText = document.getElementById("statusText");
+
+  btn.addEventListener("click", () => {
+    btn.classList.add("hidden");
+    loading.classList.remove("hidden");
+
+    setTimeout(() => {
+      statusText.textContent = "Your product is 100% authentic";
+      statusText.classList.add("fadeText");
+    }, 3000);
+
+    setTimeout(() => {
+      window.location.href =
+        "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005";
+    }, 5000);
+  });
+
+  /* SNOW PARTICLES */
+  const canvas = document.getElementById("snow");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const flakes = Array.from({ length: 120 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1,
+    d: Math.random() + 1
+  }));
+
+  function snow() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+
+    flakes.forEach(f => {
+      ctx.moveTo(f.x, f.y);
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    });
+
+    ctx.fill();
+    update();
+  }
+
+  function update() {
+    flakes.forEach(f => {
+      f.y += f.d;
+      if (f.y > canvas.height) {
+        f.y = 0;
+        f.x = Math.random() * canvas.width;
+      }
+    });
+  }
+
+  setInterval(snow, 33);
+});
+</script>
+
+</body>
+</html>
