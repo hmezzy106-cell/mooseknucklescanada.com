@@ -109,11 +109,18 @@ button:active {
   font-size: 24px;
   display: none;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.8s ease, transform 0.4s ease;
 }
 #tick {
   color: #00ff00;
   font-weight: bold;
+}
+.pulse {
+  animation: pulseAnim 0.3s ease-in-out 2;
+}
+@keyframes pulseAnim {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 </style>
 </head>
@@ -133,7 +140,7 @@ button:active {
 
 <!-- Card -->
 <div class="card">
-  <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/4/49/Moose_Knuckles_logo.svg" alt="Logo">
+  <img class="logo" src="logo.png" alt="Logo">
   <h1>Product Authentication</h1>
   <p id="message">Tap below to verify authenticity.</p>
   <button id="verifyBtn">Check Authenticity</button>
@@ -150,29 +157,32 @@ const card = document.querySelector(".card");
 btn.addEventListener("click", () => {
   btn.style.display = "none";
   
-  // Show loader with fade-in
+  // Show loader
   loader.style.display = "block";
   setTimeout(() => { loader.style.opacity = 1; }, 50);
 
-  // After 2s: hide loader, show tick with fade
+  // After 2s: hide loader, show tick
   setTimeout(() => {
     loader.style.opacity = 0;
     setTimeout(() => {
       loader.style.display = "none";
       tick.style.display = "block";
-      setTimeout(() => { tick.style.opacity = 1; }, 50);
+      setTimeout(() => { 
+        tick.style.opacity = 1; 
+        tick.classList.add("pulse");
+      }, 50);
     }, 500);
   }, 2000);
 
-  // Fade out card after 3.5s
-  setTimeout(() => { card.style.opacity = 0; }, 3500);
+  // Fade out card after 4s
+  setTimeout(() => { card.style.opacity = 0; }, 4500);
 
-  // Redirect same tab after 4s
+  // Redirect after 5.5s (tick visible slightly longer)
   setTimeout(() => {
     window.location.replace(
       "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005"
     );
-  }, 4000);
+  }, 5500);
 });
 </script>
 
