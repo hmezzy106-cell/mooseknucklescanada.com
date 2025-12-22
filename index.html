@@ -1,31 +1,381 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="backend-version" content="1.2.0.0">
-  <meta name="frontend-version" content="1.1">
-  <title>Experience</title>
-  <link rel="stylesheet" href="https://cdn.anexya.com/ddna/mooseknuckles/prd/styles/styles.css?v=1.6">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Authentication</title>
 
-  <script defer="" src="https://cdn.anexya.com/ddna/mooseknuckles/prd/scripts/main.js?v=1.4"></script>
+<style>
+body {
+  margin:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:"Segoe UI",Roboto,Arial,sans-serif;
+  overflow:hidden;
+  position:relative;
+}
 
-  <link rel="icon" type="image/x-icon" href="https://cdn.anexya.com/ddna/mooseknuckles/assets/imgs/favicon-32x32.webp">
+/* Video Background */
+.background-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  transform: scale(1.2);
+  transform-origin: center center;
+}
 
-  <script>
-    const page = "not-authentic";
-  </script>
+/* Snow */
+.snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.snow span {
+  position: absolute;
+  top: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0.2) 70%);
+  box-shadow: 0 0 6px rgba(255,255,255,0.5);
+  animation: fall linear infinite;
+}
+
+.snow span:nth-child(odd) { width:6px; height:6px; }
+.snow span:nth-child(even) { width:3px; height:3px; opacity:.7; }
+
+/* repeated spans animation omitted for brevity, keep original CSS for all 25 spans */
+
+@keyframes fall {
+  0%   { transform: translateY(-10px) translateX(0); }
+  50%  { transform: translateY(50vh) translateX(10px); }
+  100% { transform: translateY(110vh) translateX(-10px); }
+}
+
+/* Card */
+.card {
+  position:relative;
+  z-index:2;
+  backdrop-filter:blur(16px);
+  background:rgba(255,255,255,.14);
+  border-radius:24px;
+  padding:40px;
+  width:90%;
+  max-width:380px;
+  text-align:center;
+  box-shadow:
+    0 25px 50px rgba(0,0,0,.45),
+    0 0 18px rgba(180,180,180,.35),
+    0 0 22px rgba(200,200,200,.55);
+  border:1px solid rgba(180,180,180,.45);
+  color:#fff;
+  animation:fadeIn .8s ease;
+  transition:opacity .8s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0;transform:translateY(20px);}
+  to {opacity:1;transform:translateY(0);}
+}
+
+.logo {
+  width:170px;
+  margin-bottom:25px;
+  filter: drop-shadow(0 0 14px rgba(200,200,200,0.75));
+}
+
+h1 {
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:12px;
+  text-shadow:0 0 6px rgba(255,255,255,0.45);
+  border-bottom:1px solid rgba(255,255,255,0.45);
+  padding-bottom:6px;
+}
+
+p { font-size:16px; font-weight:600; opacity:.95; margin-bottom:28px; }
+
+button {
+  width:100%;
+  padding:16px;
+  font-size:17px;
+  font-weight:700;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+  color:#000;
+  cursor:pointer;
+}
+
+#verifyBtn {
+  box-shadow: 0 0 18px rgba(255,255,255,0.55);
+}
+
+button:active {
+  animation: pulse .35s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+#loader {
+  display:none;
+  opacity:0;
+  transition:opacity .6s ease;
+  margin-top:40px;
+}
+
+.loading-circle {
+  width:48px;
+  height:48px;
+  margin:0 auto 10px;
+  background:url("loading1.png") center/contain no-repeat;
+  animation:spin 1.6s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0%   { transform:rotate(0deg) scale(1); }
+  25%  { transform:rotate(40deg) scale(1.05); }
+  50%  { transform:rotate(0deg) scale(1); }
+  75%  { transform:rotate(-40deg) scale(1.05); }
+  100% { transform:rotate(0deg) scale(1); }
+}
+
+.status {
+  display:none;
+  opacity:0;
+  margin-top:20px;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:.4px;
+  transition:opacity .6s ease;
+}
+
+.mint {
+  color:#78f5aa;
+  text-shadow:0 0 8px rgba(120,245,170,.6), 0 0 16px rgba(120,245,170,.4);
+}
+
+.red {
+  color:#ff4d4d;
+  font-size:15px;
+  text-shadow:0 0 8px rgba(255,77,77,.6), 0 0 16px rgba(255,77,77,.4);
+}
+
+.status .product-id {
+  display:block;
+  font-size:14px;
+  margin-top:6px;
+  font-weight:600;
+  opacity:.9;
+}
+
+#warranty {
+  display:none;
+  opacity:0;
+  transition:opacity .4s ease;
+}
+
+.warranty-buttons {
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+}
+
+.warranty-buttons button {
+  flex:1;
+}
+
+.redirecting {
+  display:none;
+  opacity:0;
+  margin-top:14px;
+  font-size:16px;
+  font-weight:700;
+  transition:opacity .6s ease;
+  animation: redirectPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes redirectPulse {
+  0%   { opacity:0.6; }
+  50%  { opacity:1; }
+  100% { opacity:0.6; }
+}
+
+@media (max-width: 768px) {
+  body { align-items:flex-start; }
+  .card { margin-top:24vh; }
+}
+</style>
 </head>
+
 <body>
-  <div id="section1" class="container loading-container">
-    <p class="loading-text">CHECKING AUTHENTICITY</p>
+
+<iframe class="background-video" src="https://player.vimeo.com/video/639620661?autoplay=1&loop=1&background=1&muted=1"
+frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+<div class="snow">
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="card">
+  <img class="logo" src="https://mooseknucklescanada-io.github.io/mooseknucklescanada.com/logo2.png" alt="logo">
+  <h1>Product Authentication</h1>
+
+  <!-- Inserted Checking Authenticity page content -->
+  <button id="verifyBtn">Check Authenticity</button>
+
+  <div id="loader">
+    <div class="loading-circle"></div>
+    <p>Checking Product...</p>
   </div>
 
-  <div id="section2" class="container geolocation-container animate">
-    <img src="https://cdn.anexya.com/ddna/mooseknuckles/assets/imgs/backgroundPic1.png" alt="snowy mountains" class="background-image">
+  <div id="auth" class="status mint">Good News! Your product is 100% authentic ✓</div>
+  <div id="pid" class="status mint">Product ID: 600101010540</div>
 
-    <embed width="100%" height="100%" src="https://player.vimeo.com/video/639620661?autoplay=1&amp;loop=1&amp;background=1&amp;muted=1" class="video-wrapper" type="text/html" allowscriptaccess="always" allowfullscreen="true">
-
-    <p class="not-authentic-paragraph">Good News! Your product is 100% authentic.</p>
+  <div id="warranty">
+    <p>Would you like to register your product for future warranty or replacements?</p>
+    <div class="warranty-buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
   </div>
+
+  <div id="registered" class="status mint">
+    Your product has already been registered ✓
+    <span class="product-id">Product ID: 600101010540</span>
+  </div>
+
+  <div id="redirectMint" class="redirecting mint"></div>
+
+  <div id="notRegistered" class="status red">
+    This product has already been registered on 20/12/2025 ✗
+    <span class="product-id">Product ID: 600101010540</span>
+  </div>
+
+  <div id="redirectRed" class="redirecting red"></div>
+</div>
+
+<script>
+const redirectURL =
+  "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005?variant=46626671526123";
+
+const verifyBtn = document.getElementById("verifyBtn");
+const loader = document.getElementById("loader");
+const auth = document.getElementById("auth");
+const pid = document.getElementById("pid");
+const warranty = document.getElementById("warranty");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const registered = document.getElementById("registered");
+const notRegistered = document.getElementById("notRegistered");
+const redirectMint = document.getElementById("redirectMint");
+const redirectRed = document.getElementById("redirectRed");
+
+/* ===== Token access control ===== */
+const urlToken = new URLSearchParams(window.location.search).get("t");
+if (!urlToken) {
+  verifyBtn.disabled = true;
+  verifyBtn.textContent = "Access Restricted";
+  verifyBtn.style.cursor = "not-allowed";
+}
+
+/* typing effect for redirect */
+function typeText(element, text, speed = 120, callback) {
+  element.textContent = "";
+  element.style.display = "block";
+  element.style.opacity = 1;
+  let i = 0;
+  const interval = setInterval(() => {
+    element.textContent += text[i];
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      if (callback) callback();
+    }
+  }, speed);
+}
+
+/* verification sequence */
+verifyBtn.onclick = () => {
+  if (verifyBtn.disabled) return; // stop if token invalid
+
+  verifyBtn.style.display="none";
+  loader.style.display="block";
+  setTimeout(()=>loader.style.opacity=1,50);
+
+  setTimeout(()=> {
+    loader.style.opacity=0;
+    setTimeout(()=> {
+      loader.style.display="none";
+      auth.style.display="block";
+      setTimeout(()=>auth.style.opacity=1,50);
+    },400);
+  },4200);
+
+  setTimeout(()=> {
+    auth.style.opacity=0;
+    setTimeout(()=> {
+      auth.style.display="none";
+      pid.style.display="block";
+      setTimeout(()=>pid.style.opacity=1,50);
+    },400);
+  },8200);
+
+  setTimeout(()=> {
+    pid.style.opacity=0;
+    setTimeout(()=> {
+      pid.style.display="none";
+      warranty.style.display="block";
+      setTimeout(()=>warranty.style.opacity=1,50);
+    },400);
+  },11200);
+};
+
+/* yes button */
+yesBtn.onclick = () => {
+  warranty.style.opacity=0;
+  setTimeout(()=> {
+    warranty.style.display="none";
+    registered.style.display="block";
+    setTimeout(()=>registered.style.opacity=1,50);
+  },400);
+
+  setTimeout(()=> {
+    typeText(redirectMint, "Redirecting...", 120, () => {
+      setTimeout(()=>window.location.replace(redirectURL), 2000);
+    });
+  },1200);
+};
+
+/* no button */
+noBtn.onclick = () => {
+  warranty.style.opacity=0;
+  setTimeout(()=> {
+    warranty.style.display="none";
+    notRegistered.style.display="block";
+    setTimeout(()=>notRegistered.style.opacity=1,50);
+  },400);
+
+  setTimeout(()=> {
+    typeText(redirectRed, "Redirecting...", 120, () => {
+      setTimeout(()=>window.location.replace(redirectURL), 2000);
+    });
+  },1400);
+};
+</script>
 </body>
 </html>
