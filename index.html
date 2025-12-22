@@ -1,350 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product Authentication</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experience</title>
 
 <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  margin:0;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:"Segoe UI",Roboto,Arial,sans-serif;
-  overflow:hidden;
-  position:relative;
-}
-
-/* Video Background */
-.background-video {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  transform: scale(1.2);
-  transform-origin: center center;
-}
-
-/* Snow */
-.snow {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: #fff;
   overflow: hidden;
 }
 
-.snow span {
+/* SHARED */
+.container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+/* LOADING SCREEN */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  letter-spacing: 2px;
+  font-size: 13px;
+  opacity: .9;
+}
+
+/* RESULT SCREEN */
+.geolocation-container {
+  display: none;
+}
+
+.geolocation-container.active {
+  display: block;
+}
+
+.background-image {
   position: absolute;
-  top: -10px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0.2) 70%);
-  box-shadow: 0 0 6px rgba(255,255,255,0.5);
-  animation: fall linear infinite;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
-.snow span:nth-child(odd) { width:6px; height:6px; }
-.snow span:nth-child(even) { width:3px; height:3px; opacity:.7; }
-
-@keyframes fall {
-  0%   { transform: translateY(-10px) translateX(0); }
-  50%  { transform: translateY(50vh) translateX(10px); }
-  100% { transform: translateY(110vh) translateX(-10px); }
+.video-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* Card */
-.card {
-  position:relative;
-  z-index:2;
-  backdrop-filter:blur(16px);
-  background:rgba(255,255,255,.14);
-  border-radius:24px;
-  padding:40px;
-  width:90%;
-  max-width:380px;
-  text-align:center;
-  box-shadow:
-    0 25px 50px rgba(0,0,0,.45),
-    0 0 18px rgba(180,180,180,.35),
-    0 0 22px rgba(200,200,200,.55);
-  border:1px solid rgba(180,180,180,.45);
-  color:#fff;
-  animation:fadeIn .8s ease;
-  transition:opacity .8s ease;
+.video-wrapper iframe,
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
 }
 
-@keyframes fadeIn {
-  from {opacity:0;transform:translateY(20px);}
-  to {opacity:1;transform:translateY(0);}
+/* OVERLAY CONTENT */
+.not-authentic-paragraph {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  margin-top: 120px;
+  font-size: 16px;
 }
 
-.logo {
-  width:170px;
-  margin-bottom:25px;
-  filter: drop-shadow(0 0 14px rgba(200,200,200,0.75));
+/* INFO TABLE */
+.item-info-wrapper {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
 }
 
-h1 {
-  font-size:22px;
-  font-weight:700;
-  margin-bottom:12px;
-  text-shadow:0 0 6px rgba(255,255,255,0.45);
-  border-bottom:1px solid rgba(255,255,255,0.45);
-  padding-bottom:6px;
+.item-info {
+  width: 90%;
+  max-width: 420px;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  padding: 16px;
 }
 
-p { font-size:16px; font-weight:600; opacity:.95; margin-bottom:28px; }
-
-button {
-  width:100%;
-  padding:16px;
-  font-size:17px;
-  font-weight:700;
-  border:none;
-  border-radius:16px;
-  background:#fff;
-  color:#000;
-  cursor:pointer;
+.info-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
 }
 
-button:active {
-  animation: pulse .35s ease;
+.info-table p:first-child {
+  font-size: 11px;
+  opacity: .6;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.96); }
-  100% { transform: scale(1); }
-}
-
-#loader {
-  display:block; /* start visible */
-  opacity:1;
-  transition:opacity .6s ease;
-  margin-top:40px;
-}
-
-.loading-circle {
-  width:48px;
-  height:48px;
-  margin:0 auto 10px;
-  background:url("loading1.png") center/contain no-repeat;
-  animation:spin 1.6s ease-in-out infinite;
-}
-
-@keyframes spin {
-  0%   { transform:rotate(0deg) scale(1); }
-  25%  { transform:rotate(40deg) scale(1.05); }
-  50%  { transform:rotate(0deg) scale(1); }
-  75%  { transform:rotate(-40deg) scale(1.05); }
-  100% { transform:rotate(0deg) scale(1); }
-}
-
-.status {
-  display:none;
-  opacity:0;
-  margin-top:20px;
-  font-size:18px;
-  font-weight:700;
-  letter-spacing:.4px;
-  transition:opacity .6s ease;
-}
-
-.mint {
-  color:#78f5aa;
-  text-shadow:0 0 8px rgba(120,245,170,.6), 0 0 16px rgba(120,245,170,.4);
-}
-
-.red {
-  color:#ff4d4d;
-  font-size:15px;
-  text-shadow:0 0 8px rgba(255,77,77,.6), 0 0 16px rgba(255,77,77,.4);
-}
-
-.status .product-id {
-  display:block;
-  font-size:14px;
-  margin-top:6px;
-  font-weight:600;
-  opacity:.9;
-}
-
-.warranty-buttons {
-  display:flex;
-  gap:12px;
-  margin-top:12px;
-}
-
-.warranty-buttons button {
-  flex:1;
-}
-
-.redirecting {
-  display:none;
-  opacity:0;
-  margin-top:14px;
-  font-size:16px;
-  font-weight:700;
-  transition:opacity .6s ease;
-  animation: redirectPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes redirectPulse {
-  0%   { opacity:0.6; }
-  50%  { opacity:1; }
-  100% { opacity:0.6; }
-}
-
-@media (max-width: 768px) {
-  body { align-items:flex-start; }
-  .card { margin-top:24vh; }
+.info-table p:last-child {
+  font-size: 12px;
+  word-break: break-all;
 }
 </style>
 </head>
 
 <body>
 
-<iframe class="background-video" src="https://player.vimeo.com/video/639620661?autoplay=1&loop=1&background=1&muted=1"
-frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-<div class="snow">
-  <span></span><span></span><span></span><span></span><span></span>
-  <span></span><span></span><span></span><span></span><span></span>
-  <span></span><span></span><span></span><span></span><span></span>
-  <span></span><span></span><span></span><span></span><span></span>
-  <span></span><span></span><span></span><span></span><span></span>
+<!-- LOADING -->
+<div id="section1" class="container loading-container">
+  <p class="loading-text">CHECKING AUTHENTICITY</p>
 </div>
 
-<div class="card">
-  <img class="logo" src="https://mooseknucklescanada-io.github.io/mooseknucklescanada.com/logo2.png" alt="logo">
-  <h1>Product Authentication</h1>
+<!-- RESULT -->
+<div id="section2" class="container geolocation-container">
+  <img src="backgroundPic1.png" class="background-image" alt="">
 
-  <!-- Loader starts immediately -->
-  <div id="loader">
-    <div class="loading-circle"></div>
-    <p>Checking Product...</p>
+  <!-- Background video (replace with local mp4 if you want) -->
+  <div class="video-wrapper">
+    <video autoplay loop muted playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
   </div>
 
-  <div id="auth" class="status mint">Good News! Your product is 100% authentic ✓</div>
-  <div id="pid" class="status mint">Product ID: 600101010540</div>
+  <p class="not-authentic-paragraph">
+    Whoops! Looks like this tag doesn’t exist.
+  </p>
 
-  <div id="warranty">
-    <p>Would you like to register your product for future warranty or replacements?</p>
-    <div class="warranty-buttons">
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn">No</button>
+  <div class="item-info-wrapper">
+    <div class="item-info">
+      <div class="info-table">
+        <div>
+          <p>Error code</p>
+          <p>404</p>
+        </div>
+        <div>
+          <p>UID</p>
+          <p>—</p>
+        </div>
+        <div>
+          <p>UPC</p>
+          <p>—</p>
+        </div>
+        <div>
+          <p>Request ID</p>
+          <p>—</p>
+        </div>
+        <div>
+          <p>EPC</p>
+          <p>—</p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div id="registered" class="status mint">
-    Your product has already been registered ✓
-    <span class="product-id">Product ID: 600101010540</span>
-  </div>
-
-  <div id="redirectMint" class="redirecting mint"></div>
-
-  <div id="notRegistered" class="status red">
-    This product has already been registered on 20/12/2025 ✗
-    <span class="product-id">Product ID: 600101010540</span>
-  </div>
-
-  <div id="redirectRed" class="redirecting red"></div>
 </div>
 
 <script>
-const redirectURL =
-  "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005?variant=46626671526123";
-
-const loader = document.getElementById("loader");
-const auth = document.getElementById("auth");
-const pid = document.getElementById("pid");
-const warranty = document.getElementById("warranty");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const registered = document.getElementById("registered");
-const notRegistered = document.getElementById("notRegistered");
-const redirectMint = document.getElementById("redirectMint");
-const redirectRed = document.getElementById("redirectRed");
-
-/* typing effect for redirect */
-function typeText(element, text, speed = 120, callback) {
-  element.textContent = "";
-  element.style.display = "block";
-  element.style.opacity = 1;
-  let i = 0;
-  const interval = setInterval(() => {
-    element.textContent += text[i];
-    i++;
-    if (i >= text.length) {
-      clearInterval(interval);
-      if (callback) callback();
-    }
-  }, speed);
-}
-
-/* Automatically run loader sequence */
-setTimeout(()=> {
-  loader.style.opacity=0;
-  setTimeout(()=> {
-    loader.style.display="none";
-    auth.style.display="block";
-    setTimeout(()=>auth.style.opacity=1,50);
-  },400);
-},4200);
-
-setTimeout(()=> {
-  auth.style.opacity=0;
-  setTimeout(()=> {
-    auth.style.display="none";
-    pid.style.display="block";
-    setTimeout(()=>pid.style.opacity=1,50);
-  },400);
-},8200);
-
-setTimeout(()=> {
-  pid.style.opacity=0;
-  setTimeout(()=> {
-    pid.style.display="none";
-    warranty.style.display="block";
-    setTimeout(()=>warranty.style.opacity=1,50);
-  },400);
-},11200);
-
-/* yes button */
-yesBtn.onclick = () => {
-  warranty.style.opacity=0;
-  setTimeout(()=> {
-    warranty.style.display="none";
-    registered.style.display="block";
-    setTimeout(()=>registered.style.opacity=1,50);
-  },400);
-
-  setTimeout(()=> {
-    typeText(redirectMint, "Redirecting...", 120, () => {
-      setTimeout(()=>window.location.replace(redirectURL), 2000);
-    });
-  },1200);
-};
-
-/* no button */
-noBtn.onclick = () => {
-  warranty.style.opacity=0;
-  setTimeout(()=> {
-    warranty.style.display="none";
-    notRegistered.style.display="block";
-    setTimeout(()=>notRegistered.style.opacity=1,50);
-  },400);
-
-  setTimeout(()=> {
-    typeText(redirectRed, "Redirecting...", 120, () => {
-      setTimeout(()=>window.location.replace(redirectURL), 2000);
-    });
-  },1400);
-};
+/* Simulate validation delay */
+setTimeout(() => {
+  document.getElementById("section1").style.display = "none"
+  document.getElementById("section2").classList.add("active")
+}, 2000)
 </script>
+
 </body>
 </html>
