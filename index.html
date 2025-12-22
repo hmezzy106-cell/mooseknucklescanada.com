@@ -50,8 +50,6 @@ body {
 .snow span:nth-child(odd) { width:6px; height:6px; }
 .snow span:nth-child(even) { width:3px; height:3px; opacity:.7; }
 
-/* repeated spans animation omitted for brevity, keep original CSS for all 25 spans */
-
 @keyframes fall {
   0%   { transform: translateY(-10px) translateX(0); }
   50%  { transform: translateY(50vh) translateX(10px); }
@@ -113,10 +111,6 @@ button {
   cursor:pointer;
 }
 
-#verifyBtn {
-  box-shadow: 0 0 18px rgba(255,255,255,0.55);
-}
-
 button:active {
   animation: pulse .35s ease;
 }
@@ -128,8 +122,8 @@ button:active {
 }
 
 #loader {
-  display:none;
-  opacity:0;
+  display:block; /* start visible */
+  opacity:1;
   transition:opacity .6s ease;
   margin-top:40px;
 }
@@ -177,12 +171,6 @@ button:active {
   margin-top:6px;
   font-weight:600;
   opacity:.9;
-}
-
-#warranty {
-  display:none;
-  opacity:0;
-  transition:opacity .4s ease;
 }
 
 .warranty-buttons {
@@ -235,9 +223,7 @@ frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
   <img class="logo" src="https://mooseknucklescanada-io.github.io/mooseknucklescanada.com/logo2.png" alt="logo">
   <h1>Product Authentication</h1>
 
-  <!-- Inserted Checking Authenticity page content -->
-  <button id="verifyBtn">Check Authenticity</button>
-
+  <!-- Loader starts immediately -->
   <div id="loader">
     <div class="loading-circle"></div>
     <p>Checking Product...</p>
@@ -273,7 +259,6 @@ frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 const redirectURL =
   "https://www.mooseknucklescanada.com/en-gb/products/original-shearling-trim-3q-jacket-m35mj128s-1005?variant=46626671526123";
 
-const verifyBtn = document.getElementById("verifyBtn");
 const loader = document.getElementById("loader");
 const auth = document.getElementById("auth");
 const pid = document.getElementById("pid");
@@ -284,14 +269,6 @@ const registered = document.getElementById("registered");
 const notRegistered = document.getElementById("notRegistered");
 const redirectMint = document.getElementById("redirectMint");
 const redirectRed = document.getElementById("redirectRed");
-
-/* ===== Token access control ===== */
-const urlToken = new URLSearchParams(window.location.search).get("t");
-if (!urlToken) {
-  verifyBtn.disabled = true;
-  verifyBtn.textContent = "Access Restricted";
-  verifyBtn.style.cursor = "not-allowed";
-}
 
 /* typing effect for redirect */
 function typeText(element, text, speed = 120, callback) {
@@ -309,41 +286,33 @@ function typeText(element, text, speed = 120, callback) {
   }, speed);
 }
 
-/* verification sequence */
-verifyBtn.onclick = () => {
-  if (verifyBtn.disabled) return; // stop if token invalid
-
-  verifyBtn.style.display="none";
-  loader.style.display="block";
-  setTimeout(()=>loader.style.opacity=1,50);
-
+/* Automatically run loader sequence */
+setTimeout(()=> {
+  loader.style.opacity=0;
   setTimeout(()=> {
-    loader.style.opacity=0;
-    setTimeout(()=> {
-      loader.style.display="none";
-      auth.style.display="block";
-      setTimeout(()=>auth.style.opacity=1,50);
-    },400);
-  },4200);
+    loader.style.display="none";
+    auth.style.display="block";
+    setTimeout(()=>auth.style.opacity=1,50);
+  },400);
+},4200);
 
+setTimeout(()=> {
+  auth.style.opacity=0;
   setTimeout(()=> {
-    auth.style.opacity=0;
-    setTimeout(()=> {
-      auth.style.display="none";
-      pid.style.display="block";
-      setTimeout(()=>pid.style.opacity=1,50);
-    },400);
-  },8200);
+    auth.style.display="none";
+    pid.style.display="block";
+    setTimeout(()=>pid.style.opacity=1,50);
+  },400);
+},8200);
 
+setTimeout(()=> {
+  pid.style.opacity=0;
   setTimeout(()=> {
-    pid.style.opacity=0;
-    setTimeout(()=> {
-      pid.style.display="none";
-      warranty.style.display="block";
-      setTimeout(()=>warranty.style.opacity=1,50);
-    },400);
-  },11200);
-};
+    pid.style.display="none";
+    warranty.style.display="block";
+    setTimeout(()=>warranty.style.opacity=1,50);
+  },400);
+},11200);
 
 /* yes button */
 yesBtn.onclick = () => {
